@@ -31,6 +31,7 @@ public class Main {
                 .exception(Exception.class, (e, ctx) -> {
                     ctx.status(500);
                     ctx.result("Error: " + e.getMessage());
+                    e.printStackTrace();
                 })
                 .get("/register/{user}", ctx -> {
                     String user = ctx.pathParam("user");

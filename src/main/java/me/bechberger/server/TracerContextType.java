@@ -1,5 +1,6 @@
 package me.bechberger.server;
 
+import com.google.auto.service.AutoService;
 import jdk.jfr.Description;
 import jdk.jfr.Name;
 import jdk.jfr.ContextType;
@@ -8,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Name("tracer-context")
 @Description("Tracer context type tuple")
+@AutoService(ContextType.class)
 public class TracerContextType extends ContextType implements AutoCloseable {
 
     private static final AtomicLong traceIdCounter = new AtomicLong(0);
@@ -25,14 +27,15 @@ public class TracerContextType extends ContextType implements AutoCloseable {
     @Description("File if passed")
     public String file;
 
+    // currently no primitives allowed here
     @Name("trace")
-    public long traceId;
+    public String traceId;
 
     public TracerContextType(String user, String action, String file) {
         this.user = user;
         this.action = action;
         this.file = file;
-        this.traceId = traceIdCounter.incrementAndGet();
+        this.traceId = "" + traceIdCounter.incrementAndGet();
         this.set();
     }
 
@@ -42,7 +45,6 @@ public class TracerContextType extends ContextType implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        System.out.println("Closing TracerContextType: is active " + this.isActive());
         unset();
     }
 }

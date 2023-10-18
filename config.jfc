@@ -2,29 +2,16 @@
 
 <configuration version="2.0" label="Custom" description="Custom config for the example"
   provider="Johannes Bechberger">
-    <event name="jdk.FileRead">
+    <event name="jdk.FileRead" withContext="true">
         <setting name="enabled">true</setting>
         <setting name="stackTrace">true</setting>
         <setting name="threshold" control="file-threshold">0 ms</setting>
     </event>
 
-    <event name="jdk.FileWrite">
+    <event name="jdk.FileWrite" withContext="true">
         <setting name="enabled">true</setting>
         <setting name="stackTrace">true</setting>
         <setting name="threshold" control="file-threshold">0 ms</setting>
     </event>
-
-    <event name="jdk.SocketRead">
-        <setting name="enabled">true</setting>
-        <setting name="stackTrace">true</setting>
-        <setting name="threshold" control="socket-threshold">0 ms</setting>
-    </event>
-
-    <event name="jdk.SocketWrite">
-        <setting name="enabled">true</setting>
-        <setting name="stackTrace">true</setting>
-        <setting name="threshold" control="socket-threshold">0 ms</setting>
-    </event>
-
 </configuration>
 

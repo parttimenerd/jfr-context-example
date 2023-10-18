@@ -8,6 +8,9 @@ java -XX:StartFlightRecording=filename=flight.jfr,settings=config.jfc \
      -jar target/jfr-context-example.jar $port &
 pid=$!
 
+# register kill handler that kills pid on exit
+trap "kill $pid" EXIT
+
 sleep 2
 
 # list of 10 realistic people users stored in a variable

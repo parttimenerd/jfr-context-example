@@ -25,7 +25,6 @@ making it simpler to analyse performance issues.
 
 The currently supported events are:
 
-- jdk.ExecutionSample
 - jdk.NativeMethodSample
 - jdk.ObjectAllocationSample
 - jdk.ThreadPark
@@ -111,6 +110,67 @@ but is required in our toy example to get any events.
 Our implementation creates a new trace context for each request
 and tracks the user, the file name and the operation.
 
+But what can we do with this information?
+We can use the [`jfr`](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jfr.html)
+tool to analyse the flight recording and get a list
+of `jdk.FileRead` events in JSON format:
+
+```sh
+jfr print --events jdk.FileRead --json flight.jfr
+```
+These events look like:
+
+```json
+{
+  "type": "jdk.FileRead", 
+  "values": {
+    "startTime": "2023-10-18T14:31:56.369071625+02:00", 
+    "duration": "PT0.000013042S", 
+    "eventThread": {
+      "osName": "qtp2119992687-32", 
+      ...
+    }, 
+    "stackTrace": {
+      "truncated": false, 
+      "frames": [...]
+    }, 
+    "tracer-context_user": "moe", 
+    "tracer-context_action": "load", 
+    "tracer-context_file": "test_1", 
+    "tracer-context_trace": "114", 
+    "path": "\/var\/folders\/nd\/b8fyk_lx25b1ndyj4kmb2hk403cmxz\/T\/tmp13266469351066000997\/moe\/test_1", 
+    "bytesRead": 8, 
+    "endOfFile": false
+  }
+}
+```
+
+We clearly see the stored context information (`tracer-context_*`).
+
+Using the [`jq`](https://jqlang.github.io/jq/) tool, we can analyze
+the events further and can for example calculate how many bytes the
+server read for each user:
+
+```sh
+➜  jfr print --events jdk.FileRead \
+  --json flight.jfr | jq -r '.recording.events | group_by(.values."tracer-context_user") | map({user: .[0].values."tracer-context_user", bytesRead: (map(.values.bytesRead) | add)}) | map([.user, .bytesRead]) | ["User", "Bytes Read"], .[] | @tsv'
+User    Bytes Read
+        3390245
+bob     80
+curly   100
+frank   100
+joe     80
+john    90
+larry   100
+mary    90
+moe     80
+sally   100
+sue     80
+```
+
+The empty user is for all the bytes read unrelated to any specific user (like class files).
+
+This small example is just a glimpse of what is possible with JFR contexts.
 
 License
 -------
