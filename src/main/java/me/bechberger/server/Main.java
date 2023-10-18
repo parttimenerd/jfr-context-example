@@ -1,7 +1,6 @@
 package me.bechberger.server;
 
 import io.javalin.Javalin;
-import jdk.jfr.FlightRecorder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
@@ -35,33 +34,25 @@ public class Main {
                 })
                 .get("/register/{user}", ctx -> {
                     String user = ctx.pathParam("user");
-                    try (var t = new TracerContextType(user, "register")) {
-                        storage.register(user);
-                        ctx.result("registered");
-                    }
+                    storage.register(user);
+                    ctx.result("registered");
                 })
                 .get("/store/{user}/{file}/{content}", ctx -> {
                     String user = ctx.pathParam("user");
                     String file = ctx.pathParam("file");
-                    try (var t = new TracerContextType(user, "store", file)) {
-                        storage.store(user, file, ctx.pathParam("content"));
-                        ctx.result("stored");
-                    }
+                    storage.store(user, file, ctx.pathParam("content"));
+                    ctx.result("stored");
                 })
                 .get("/load/{user}/{file}", ctx -> {
                     String user = ctx.pathParam("user");
                     String file = ctx.pathParam("file");
-                    try (var t = new TracerContextType(user, "load", file)) {
-                        ctx.result(storage.load(user, file));
-                    }
+                    ctx.result(storage.load(user, file));
                 })
                 .get("/delete/{user}/{file}", ctx -> {
                     String user = ctx.pathParam("user");
                     String file = ctx.pathParam("file");
-                    try (var t = new TracerContextType(user, "delete", file)) {
-                        storage.delete(user, file);
-                        ctx.result("deleted");
-                    }
+                    storage.delete(user, file);
+                    ctx.result("deleted");
                 })) {
             lin.start(port);
             Thread.sleep(100000000);

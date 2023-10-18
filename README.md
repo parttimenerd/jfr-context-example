@@ -8,7 +8,7 @@ You can find his blog posts, from which I adapted my example, here:
 https://jbachorik.github.io/posts/seeing-in-context_2 
 
 And his trial implementation in an OpenJDK fork here:
-https://github.com/DataDog/openjdk-jdk/tree/jb/jfr_context (commit 6670884)
+https://github.com/DataDog/openjdk-jdk/tree/jb/jfr_context (commit 6ea2b4f)
 
 My main idea is here to show an example of the API and how to use it for
 a somewhat realistic example.
