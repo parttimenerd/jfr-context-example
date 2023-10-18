@@ -152,8 +152,19 @@ the events further and can for example calculate how many bytes the
 server read for each user:
 
 ```sh
-➜  jfr print --events jdk.FileRead \
-  --json flight.jfr | jq -r '.recording.events | group_by(.values."tracer-context_user") | map({user: .[0].values."tracer-context_user", bytesRead: (map(.values.bytesRead) | add)}) | map([.user, .bytesRead]) | ["User", "Bytes Read"], .[] | @tsv'
+➜  jfr print --events jdk.FileRead --json flight.jfr |
+   jq -r '
+      .recording.events 
+      | group_by(.values."tracer-context_user")
+      | map({
+          user: .[0].values."tracer-context_user",
+          bytesRead: (map(.values.bytesRead) | add)
+        })
+      | map([.user, .bytesRead])
+      | ["User", "Bytes Read"]
+      , .[]
+      | @tsv
+    '
 User    Bytes Read
         3390245
 bob     80
